@@ -150,5 +150,26 @@ The figure above describes how a dashboard can be customized by creating individ
 | Memory Usage %                    | `100 * (1 - (node_memory_MemFree_bytes / node_memory_MemTotal_bytes))`                                                                             |
 | CPU Usage                         | `100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)`                                                                                |
 
+## 2.3.3. Setting up Grafana SMTP
 
+Automated alerting systems are an important tool for maintaining optimal cluster health. By transmitting alerts, problems that may occur can be brought into the forefront, so that they are dealt with in real-time. Grafana provides this functionality. This paper also presents email alerting, which can be configured as follows. To enable this, the Grafana ConfigMap must contain a configured Simple Mail Transfer Protocol (SMTP). The ConfigMap can be configured using the “kubectl edit” command, which will also automatically apply the changes done to it.   
+
+```bash
+1.	microk8s kubectl get configmaps -n observability
+2.	microk8s kubectl edit configmap kube-prom-stack-grafana -n observability 
+
+```
+
+The SMTP field is configured as follows. For email alerting to be possible, an SMTP service is required to process and automate the alerting. For this implementation, Twilio’s SendGrid API has been used, which can be accessed via their official website: https://www.twilio.com/en-us/sendgrid/email-api, this will act as the host, namely (“smtp.sendgrid.net” – via port 465, which is associated to SMTP services). After registering on Twilio’s website, a secret API key will be generated required to access the service. The fields need to be configured with this key, which acts as a password, as well as with the email address utilized by SendGrid to send the alerting emails. The name for the sender address can also be customized here.
+
+```bash
+    [smtp]
+    enabled = true
+    host = smtp.sendgrid.net:465
+    user = apikey
+    password = ********************
+    skip_verify = true
+    from_address = alertgrafanalic@gmail.com
+    from_name = Grafana 
+```
 
