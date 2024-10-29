@@ -69,5 +69,18 @@ To access the PV previously a private volume claim (PVC) resource must be create
           volumeName: grafana-storage
 ```
 
-35
+After the configuration are saved, these must be applied using the “kuebctl apply -f” followed up by the name of the file. If everything is correct, when retrieving the PVC within the cluster, it should be bound to the PV.
 
+```bash
+        kube@kube:~$ microk8s kubectl get pvc --all-namespaces 
+        NAMESPACE       NAME                    STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE observability   grafana-storage-claim   Bound    grafana-storage   5Gi       RWO            standard       <unset>                 52d
+
+```
+The next step in ensuring the data persistency within the Grafana service is to modify its deployment running inside the cluster. The configuration file of the Grafana deployment should be retrieved locally and modified according to the created PVC and PV. This can be done utilizing the following command, which will save the file under the name “kube-prom-stack-grafana.yaml”, after which it can be edited using the vi text editor.
+
+```bash
+1.	microk8s kubectl get deployment kube-prom-stack-grafana -n observability -o yaml > kube-prom-stack-grafana.yaml
+2.	vi kube-prom-stack-grafana.yaml
+3.	microk8s kubectl apply -f kube-prom-stack-grafana.yaml
+
+```
