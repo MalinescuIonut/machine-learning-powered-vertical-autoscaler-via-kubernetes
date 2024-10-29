@@ -150,6 +150,8 @@ The figure above describes how a dashboard can be customized by creating individ
 | Memory Usage %                    | `100 * (1 - (node_memory_MemFree_bytes / node_memory_MemTotal_bytes))`                                                                             |
 | CPU Usage                         | `100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)`                                                                                |
 
+![Screenshot 2024-10-30 001735](https://github.com/user-attachments/assets/249cdaa3-74e0-43db-8731-5be3bdbb7158)
+
 ## 2.3.3. Setting up Grafana SMTP
 
 Automated alerting systems are an important tool for maintaining optimal cluster health. By transmitting alerts, problems that may occur can be brought into the forefront, so that they are dealt with in real-time. Grafana provides this functionality. This paper also presents email alerting, which can be configured as follows. To enable this, the Grafana ConfigMap must contain a configured Simple Mail Transfer Protocol (SMTP). The ConfigMap can be configured using the “kubectl edit” command, which will also automatically apply the changes done to it.   
