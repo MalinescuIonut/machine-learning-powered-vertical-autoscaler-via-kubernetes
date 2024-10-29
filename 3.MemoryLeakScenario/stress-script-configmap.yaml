@@ -1,0 +1,43 @@
+ubuntu@mvictor-vm-1:~$ cat stress-script-config.yaml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stress-script-config
+  namespace: stress-test
+data:
+  stress_script.sh: |
+    #!/bin/sh
+
+    exec > /tmp/stress_script.log 2>&1
+
+    cleanup() {
+        echo "Cleanup before exiting..."
+        pkill stress-ng  # Terminate any running stress-ng processes
+        #sync && echo 3 > /proc/sys/vm/drop_caches  # Drop caches to release memory
+        exit 0
+    }
+
+    # Set up signal handler
+    trap cleanup SIGTERM
+
+    # Fetch memory limit from environment variable
+    max_memory=$(printenv MEMORY_LIMIT)
+
+    # Set initial values
+    current_memory=0  # Initial memory
+    step=100           # Step in MB
+    duration=30       # Duration in seconds
+    interval=5        # Interval between allocations in seconds
+
+    # While loop to increase memory allocation
+    while true; do
+        for i in $(seq 1 $((duration / interval))); do
+            # if [ $current_memory -gt $max_memory ]; then
+            #    cleanup
+            # fi
+            stress-ng --vm 1 --vm-bytes "${current_memory}M" --vm-keep --timeout "${interval}s" --verbose
+            current_memory=$((current_memory + step))
+            sleep $interval
+        done
+        cleanup
+    done
