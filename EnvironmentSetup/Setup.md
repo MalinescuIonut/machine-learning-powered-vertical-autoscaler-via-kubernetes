@@ -15,7 +15,17 @@ After the machine is up and running the chosen Kubernetes distribution can be in
 
 
 ```bash
-sudo snap install microk8s --classic
-microk8s status # check installation status
+1.  sudo snap install microk8s --classic
+2.  microk8s status # check installation status
 ```
+
+To complete the Microk8s setup the username of the VM, “ubuntu”, must be added to Micork8s. Ensuring this, the user “ubuntu” will have permissions granted to interact with the cluster and to be able to manage it. By running the second command “chown”, meaning “change owner”, the owner of the “.kube” directory will be set as “ubuntu”, giving the user full permissions over it.
+
+```bash
+1.	sudo usermod -a -G microk8s ubuntu
+2.	sudo chown -R ubuntu ~/.kube
+```
+
+
+# 1.3. Installing Microk8s
 
