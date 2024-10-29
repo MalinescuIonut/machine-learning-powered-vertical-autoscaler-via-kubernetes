@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/3745f68e-ed1c-474d-9715-2e938b0d2edd)# Kubernetes Memory Leak Detection and Auto-Scaling with Machine Learning
+# Kubernetes Memory Leak Detection and Auto-Scaling with Machine Learning
 This repository focuses on Kubernetes processes and addresses the effects of memory leaks within a cluster. It introduces a novel auto-scaling method using machine learning (ML) techniques, including Long Short-Term Memory (LSTM) and Autoregressive Integrated Moving Average (ARIMA). The ML models are trained on data collected from simulated memory leak scenarios.
 
 # Key Features
@@ -12,4 +12,5 @@ Auto-Scaling System: Deploys a machine learning-powered auto-scaling system base
 # Performance Monitoring
 The impact of this implementation is measured by analyzing forecasted scaling intervals compared to actual peak memory usage moments. The repository also includes a comparative analysis of different ML model types and suggestions for future improvements.
 
-![Picture1](https://github.com/user-attachments/assets/f145efeb-0be7-458f-91b3-efb2b5e283da)
+
+![Screenshot 2024-10-29 171918](https://github.com/user-attachments/assets/e28f6a26-6e67-43d6-b5bc-b70061cb5b16)
