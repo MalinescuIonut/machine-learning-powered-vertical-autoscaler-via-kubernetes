@@ -138,5 +138,17 @@ When accessing this link, the user will be greeted with a Log-in screen, the cre
         kube-prom-stack-grafana       NodePort   10.152.183.185   <none>        80:32612/TCP    9d                                                                                               
 ```
 
+![Screenshot 2024-10-29 184751](https://github.com/user-attachments/assets/351fecb9-8d89-4131-8f37-00e015685ff0)
+
+The figure above describes how a dashboard can be customized by creating individual panels, each displaying distinct data. By making use of PromQL, the query language specifically designed for querying Prometheus, different metrics can be displayed. In the case above, the total memory usage across the node is graphically presented over time, by querying both the free memory and the total memory of the node. The interval between data points may also be chosen to display more or less points. It is also possible to display older data, since data scraped by Prometheus is saved over a longer period. This is done by selecting the querying time range. For this implementation the following metrics are displayed inside the dashboard: the Prometheus Memory Usage, the Stress-Testing Pods memory usage, the total memory usage and the CPU usage. These are displayed using the PromQL syntaxes found in the following table:
+
+| Metric Displayed                  | PromQL Syntax                                                                                                                                                                            |
+|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Prometheus Memory Usage           | `sum(container_memory_usage_bytes{namespace="observability", pod="prometheus-kube-prom-stack-kube-prome-prometheus-0"}) by (pod) / 1024 / 1024`                                         |
+| Stress – Testing Pod Memory Usage | `sum(container_memory_usage_bytes{namespace="stress-test", pod=~"stress-testing-deployment-.*"}) by (pod) / 1024 / 1024`                                                                 |
+| Stress – Testing Pod Memory Usage % | `(sum(container_memory_usage_bytes{namespace="stress-test", pod=~"stress-testing-deployment-.*"})  by (pod) / 1024 / 1024) / 512 * 100`                                               |
+| Memory Usage %                    | `100 * (1 - (node_memory_MemFree_bytes / node_memory_MemTotal_bytes))`                                                                             |
+| CPU Usage                         | `100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)`                                                                                |
+
 
 
