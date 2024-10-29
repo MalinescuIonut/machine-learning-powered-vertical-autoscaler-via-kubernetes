@@ -39,6 +39,8 @@ Using the “get services” command, all the services running inside the cluste
 ```
 # 2.3. Setting up Grafana Monitoring
 
+## 2.3.1. Ensuring Data Persistency
+
 The following step in the implementation is to properly set up Grafana itself. In order for modifications applied to the Grafana web interface to be saved through system reboots, a persistent volume must be created. To achieve this, a persistent volume (PV) resource must be defined. The file can be created using the UNIX command “touch” and then edited using any text editor like “cat” or “vi”. The grafana-pv.yaml file contained within the appendix part of this paper describes the configuration of the PV. Under the specification section, the following are defined: the amount of storage allocated, 5GB, the fact that only one node may have this volume mounted to itself and the path in which the data will be stored (“/mnt/data/grafana”). 
 
 ```bash
@@ -84,3 +86,46 @@ The next step in ensuring the data persistency within the Grafana service is to 
 3.	microk8s kubectl apply -f kube-prom-stack-grafana.yaml
 
 ```
+
+Inside the file, the following modifications should be made to ensure data persistency. Under the volumeMounts section the mount path should be changed to the one defined within the PV, as seen below.
+
+```bash
+        ubuntu@mvictor-vm-1:~$ cat kube-prom-stack-grafana.yaml
+        ...
+        volumeMounts:
+            - mountPath: /etc/grafana/grafana.ini
+              name: config
+              subPath: grafana.ini
+            - mountPath: /mnt/data/grafana
+              name: grafana-storage
+```
+
+The path defined within the PV, namely “/mnt/data/grafana” should also be added under the “GF_PATHS_DATA” section.
+
+```bash
+        ubuntu@mvictor-vm-1:~$ cat kube-prom-stack-grafana.yaml
+        ... 
+        - name: GF_PATHS_DATA
+                  value: /mnt/data/grafana
+```
+
+The final modification required for the Grafana deployment file is to specify that the volume defined in the volumeMounts section (grafana-storage) is backed up by the PVC resource named “grafana-storage-claim” defined previously. This modification is done under the volumes section of the configuration.
+
+```bash
+        ubuntu@mvictor-vm-1:~$ cat kube-prom-stack-grafana.yaml
+        ... 
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: kube-prom-stack-grafana
+          name: config
+        - name: grafana-storage
+            persistentVolumeClaim:
+            claimName: grafana-storage-claim
+
+```
+
+
+
+
+
