@@ -93,7 +93,7 @@ After performing tests on all the presented models, Table 2 has been created to 
 | **Mean Squared Error (MSE) – Normalized** | 2.502140e-07               | 0.01            | 0.006090        |
 | **Next Predicted Time Stamp – Unix**   | 1716546594                   | 1716494720      | 1716553344      |
 | **Next Predicted Time Stamp – HR (GMT)** | Friday, May 24, 2024, 10:29:54 AM | Thursday, May 23, 2024, 8:05:20 PM | Friday, May 24, 2024, 12:22:23 PM |
-| **Target Timestamp**                   | 1716557400 / (Friday, May 24, 2024, 10:30:00 AM) | - | - |
+| **Target Timestamp**                   | 1716557400 / (Friday, May 24, 2024, 10:30:00 AM)  |
 
 Regardless of these results, the scenario enacted on these models was an ideal one, with a good periodicity, which would make the ARIMA preferable in this case, because this model types assumes the stationarity of data or that it can be made stationary, but this paper serves as a proof of concept, meaning that the other models also offer great insight in the domain of time forecasting. Although their results proved to be less satisfactory than desired in this case, they may yet still prove to be efficient in real-life situations, where periodicity between points of interest might not be so easy to determine and where larger amounts of data and more context regarding it, can be provided.
 
