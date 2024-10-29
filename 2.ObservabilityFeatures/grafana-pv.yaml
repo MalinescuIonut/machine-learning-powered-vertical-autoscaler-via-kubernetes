@@ -1,0 +1,14 @@
+# ubuntu@mvictor-vm-1:~$ cat grafana-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-storage
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  hostPath:
+    path: /mnt/data/grafana
+  persistentVolumeReclaimPolicy: Retain
