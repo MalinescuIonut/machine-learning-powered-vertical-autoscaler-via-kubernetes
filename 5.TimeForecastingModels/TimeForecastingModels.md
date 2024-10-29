@@ -1,0 +1,12 @@
+## 5.1. Autoregressive Integrated Moving Average (ARIMA) Statistical Model
+
+The next step in the implementation of this project was the creation of a model, capable of using past trends in data to forecast a future event. In this case, it should use peak data timestamps to predict an equivalent future event. This is why, as said before, an autoregressive model is appropriate for time series forecasting. The ARIMA statistical model is modeled by 3 hyperparameters, “p”, “d”, “q”, corresponding to each part of its architecture: autoregressive part, integrated part, respectively moving average part.
+
+For the creation of this model, a python script has been devised to tune these hyperparameters and find the best ones for a testbed of 24 hours of data. The ARIMA model is imported from the “statsmodels” library. To increase the performance of the model, before feeding the data into it, it is first normalized between the values of 0 and 1, by the ”MinMaxScaler” from “scikit-learn” library. For the training of this model, the data is split like this: 80% for training and the remaining 20% used for testing. To test the performance of the model, the root mean squared error (RMSE) is also computed for this model. A grid test is performed to extract the best model architecture, by training the model for each architecture case and comparing the best RMSE. Finally, the best model is fitted, and the forecasting is performed. In the final implementation, only the model with the best hyperparameter-combination is run as a containerized application within the cluster. Identically to the previous cases, of the stress and the data processing applications, a deployment has been defined to manage the container running this model. Inside the container, a CronJob is yet again defined to run the ARIMA model training script twice an hour (at minute 20 & 50) and to generate a CSV file (“next_peak_arima.csv”) containing the forecasted timestamp for the next spike in memory usage. Using this output, scaling can be performed
+
+```bat
+  echo "*20,50 * * * * cd /python-scripts && /usr/local/bin/python arima_model.py >> forecast.log 2>&1" > /etc/cron.d/arima-forecast &&
+  crontab /etc/cron.d/arima-forecast &&
+  cron -f
+
+```
