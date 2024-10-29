@@ -9,4 +9,13 @@ This project involves setting up an Ubuntu Server (20.04) on a VMware Workstatio
 ![Screenshot 2023-10-03 012843](https://github.com/user-attachments/assets/4f814bd3-2d9c-4c5f-a381-703eb711aa58)
 
 
-# 1.2. 
+# 1.2. Installing Microk8s
+
+After the machine is up and running the chosen Kubernetes distribution can be installed. Microk8s can be installed using the following commands. 
+
+
+```bash
+sudo snap install microk8s --classic
+microk8s status # check installation status
+```
+
