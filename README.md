@@ -12,5 +12,5 @@ Auto-Scaling System: Deploys a machine learning-powered auto-scaling system base
 # Performance Monitoring
 The impact of this implementation is measured by analyzing forecasted scaling intervals compared to actual peak memory usage moments. The repository also includes a comparative analysis of different ML model types and suggestions for future improvements.
 
-
+# Application Architecture
 ![Screenshot 2024-10-29 171918](https://github.com/user-attachments/assets/e28f6a26-6e67-43d6-b5bc-b70061cb5b16)
