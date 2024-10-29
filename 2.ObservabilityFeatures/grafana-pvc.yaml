@@ -1,0 +1,16 @@
+# ubuntu@mvictor-vm-1:~$ cat grafana-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-storage-claim
+  namespace: observability
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
+  volumeName: grafana-storage
