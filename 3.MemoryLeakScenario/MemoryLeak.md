@@ -1,0 +1,2 @@
+## 3. Creating a Memory Leak Scenario
+The following step in the implementation is creating a memory leak scenario to simulate data for the future sections. To do this the “stress-ng” command will be utilized to use up memory at specific intervals determined by CronJobs, the Unix job schedulers. To separate this simulation from the observability namespace, a new resource is defined. This described definition of the namespace is linked in the appendix (“Stress-test Namespace Resource”).
