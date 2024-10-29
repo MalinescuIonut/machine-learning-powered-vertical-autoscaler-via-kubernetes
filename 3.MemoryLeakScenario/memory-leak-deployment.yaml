@@ -1,0 +1,65 @@
+ubuntu@mvictor-vm-1:~$ cat stress-testing-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-testing-deployment
+  namespace: stress-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stress-testing
+  template:
+    metadata:
+      labels:
+        app: stress-testing
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: config-volume
+        configMap:
+          name: stress-script-config
+      - name: shared-data
+        emptyDir: {}
+      initContainers:
+      - name: init-script
+        image: busybox
+        command: ["sh", "-c", "
+          echo 'Checking if /shared is writable';
+          touch /shared/testfile && echo 'Writable' || echo 'Not writable';
+          rm -f /shared/testfile;
+          echo 'Listing contents of /config';
+          ls -l /config;
+          echo 'Displaying contents of /config/stress_script.sh';
+          cat /config/stress_script.sh;
+          echo 'Copying script to /shared';
+          cp /config/stress_script.sh /shared/stress_script.sh;
+          echo 'Converting line endings to Unix-style';
+          sed -i 's/\r$//' /shared/stress_script.sh;
+          echo 'Making script executable';
+          chmod +x /shared/stress_script.sh;
+          echo 'Listing contents of /shared';
+          ls -l /shared/stress_script.sh;
+        "]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+        - name: shared-data
+          mountPath: /shared
+      containers:
+      - name: stress-testing-container
+        image: ******************/stress-testing-image:latest
+        env:
+        - name: MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+              divisor: 1M
+        resources:
+          requests:
+            memory: "512M"
+          limits:
+            memory: "512M"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /tmp
