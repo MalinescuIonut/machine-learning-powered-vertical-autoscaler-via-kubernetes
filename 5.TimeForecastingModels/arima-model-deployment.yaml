@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arima-forecast-deployment
+  namespace: python-scripts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arima-forecast
+  template:
+    metadata:
+      labels:
+        app: arima-forecast
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: python-script-container
+        image: python:3.8-slim
+        command:
+        - sh
+        - -c
+        - |
+          apt-get update &&
+          apt-get install -y curl cron &&
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &&
+          chmod +x ./kubectl &&
+          mv ./kubectl /usr/local/bin/kubectl &&
+          pip install pandas statsmodels scikit-learn &&
+          echo "20,50 * * * * cd /python-scripts && pwd && /usr/local/bin/python arima_model.py >> forecast.log 2>&1" > /etc/cron.d/arima-forecast &&
+          # echo "20,50 * * * * cd /python-scripts && pwd && sleep 1m && /usr/local/bin/python scaling.py >> scaling.log 2>&1" >> /etc/cron.d/arima-forecast &&
+          crontab /etc/cron.d/arima-forecast &&
+          cron -f
+        env:
+        - name: KUBECONFIG
+          value: /root/.kube/config
+        resources:
+          requests:
+            memory: "512M"
+          limits:
+            memory: "1G"
+        resizePolicy:
+        - resourceName: memory
+          restartPolicy: NotRequired
+        volumeMounts:
+        - name: script-volume
+          mountPath: /python-scripts
+          readOnly: false
+        - name: kubeconfig-volume
+          mountPath: /root/.kube
+          readOnly: true
+      volumes:
+      - name: script-volume
+        hostPath:
+          path: /home/ubuntu/python-scripts
+          type: Directory
+      - name: kubeconfig-volume
+        hostPath:
+          path: /home/ubuntu/.kube
+          type: Directory
