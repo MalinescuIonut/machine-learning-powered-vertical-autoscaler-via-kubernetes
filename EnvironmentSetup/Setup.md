@@ -27,5 +27,5 @@ To complete the Microk8s setup the username of the VM, “ubuntu”, must be add
 ```
 
 
-# 1.3. Installing Microk8s
+# 1.3. Setting up the Observability Features
 
