@@ -1,1 +1,42 @@
+# ubuntu@mvictor-vm-1:~$ microk8s kubectl edit configmap kube-prom-stack-grafana -n observability
+apiVersion: v1
+data:
+  grafana.ini: |
+    [analytics]
+    check_for_updates = true
+    [grafana_net]
+    url = https://grafana.net
+    [log]
+    mode = console
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+    [server]
+    domain = ''
+    [smtp]
+    enabled = true
+    host = smtp.sendgrid.net:465
+    user = apikey
+    password = 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
+    skip_verify = true
+    from_address = alertgrafanalic@gmail.com
+    from_name = Grafana
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prom-stack
+    meta.helm.sh/release-namespace: observability
+  creationTimestamp: "2024-06-13T09:09:53Z"
+  labels:
+    app.kubernetes.io/instance: kube-prom-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 9.3.8
+    helm.sh/chart: grafana-6.51.2
+  name: kube-prom-stack-grafana
+  namespace: observability
+  resourceVersion: "189508"
+  uid: 78ee3c74-b7c9-4f2f-a0c7-579b97c74a57 
 
