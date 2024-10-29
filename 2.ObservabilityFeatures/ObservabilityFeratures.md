@@ -69,4 +69,5 @@ To access the PV previously a private volume claim (PVC) resource must be create
           volumeName: grafana-storage
 ```
 
+35
 
