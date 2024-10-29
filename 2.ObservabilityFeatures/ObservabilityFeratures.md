@@ -125,7 +125,18 @@ The final modification required for the Grafana deployment file is to specify th
 
 ```
 
+## 2.3.2. Managing Grafana Dashboard
 
+After ensuring Grafana’s data persistency, modifications can be now made to its Dashboard UI that will be kept through reboots. The UI can be accessed by using the IP address of the machine combined with port provided to the service. To access it, such a link may be composed: http://10.8.8.188:32612/.
+
+When accessing this link, the user will be greeted with a Log-in screen, the credentials for which were provided during the installation of the Prometheus package (user/pass: admin/prom-operator). After logging into the UI, a custom dashboard can be created to display all the relevant information required to monitor the cluster.
+
+```bash
+        ubuntu@mvictor-vm-1:~$ microk8s kubectl get services -n observability
+        NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE                                                                                                           
+        ...
+        kube-prom-stack-grafana       NodePort   10.152.183.185   <none>        80:32612/TCP    9d                                                                                               
+```
 
 
 
