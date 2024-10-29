@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-processing-deployment
+  namespace: python-scripts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-processing
+  template:
+    metadata:
+      labels:
+        app: data-processing
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: python-script-container
+        image: alpine:latest
+        command:
+        - sh
+        - -c
+        - |
+          apk update &&
+          apk add --no-cache python3 py3-pip curl coreutils &&
+          pip3 install --break-system-packages pandas scipy pytz &&
+          echo "*/15 * * * * cd /python-scripts && pwd && /bin/sh fetch_memory_usage.sh >> fetch_memory.log 2>&1" > /etc/crontabs/root &&
+          echo "*/15 * * * * cd /python-scripts && pwd && sleep 15 && /usr/bin/python3 data_processing.py >> fetch_memory.log 2>&1" >> /etc/crontabs/root &&
+          crond -f
+        resources:
+          requests:
+            memory: "512M"
+          limits:
+            memory: "1G"
+        volumeMounts:
+        - name: script-volume
+          mountPath: /python-scripts
+          readOnly: false
+      volumes:
+      - name: script-volume
+        hostPath:
+          path: /home/ubuntu/python-scripts
+          type: Directory
