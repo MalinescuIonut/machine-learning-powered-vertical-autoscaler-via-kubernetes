@@ -173,3 +173,32 @@ The SMTP field is configured as follows. For email alerting to be possible, an S
     from_name = Grafana 
 ```
 
+
+## 2.3.4. Creaating Grafana Alerting Rules
+
+After fully customizing Grafana, setting alerting rules should be the following step. Alerting rules determine how and when alerts are sent, according to their definitions. This project covers the monitoring and scaling of a container, which is still yet to be defined in another section, which means that rule will be set up as outlined in the following section. The total memory usage will be analyzed and three distinct thresholds for different severities will be defined, namely memory usage surpassing 80% of the total memory will trigger a normal warning, 90% will trigger a critical warning and upon reaching 95%, a severe warning will be issued. This can be done by defining three distinct alerting rules, for each severity type in the Grafana dashboard UI. 
+Figure 24 (Anex 8.5) presents the creation of such a rule. First the desired metric must be queried, this being the total memory usage across the stress-test container, a threshold for the alert must be set, the interval at which the queried data is interpreted must be chosen and finally, the severity will be defined. After the rules are created, a contact point must be constructed so that the emails will be redirected to a desired address. An email contact point is able to be established by providing the email address of the user. With the contact point now defined, all three warnings can be grouped by a notification policy, this way all the alerts will be routed to the established contact point. This is provided in the following figure. 
+
+![Screenshot 2024-10-29 185515](https://github.com/user-attachments/assets/7761e3f8-fce3-4f90-9a1b-d629d9ee3c91)
+
+# 2.4. Setting up Prometheus
+
+As a next step, a decision must be taken regarding the setup of Prometheus. By default, Prometheus is configured with a scope in mind, that might not suit the work done by this project, but this may be adapted easily. This paper scope is to work as a proof for a larger concept, as such the amount of data that will be analyzed will be short term data. To ensure that the highlights that need to be analyzed have a greater chance of being detected, the scraping interval must be changed from the default of 30 seconds to 10 seconds. Because of this change, plenty more data points will be retrieved, which will have an impact on the performance of the system, as Prometheus also utilizes RAM memory to store them. To diminish this impact on the machine, the retention interval can be set to a lower value, 1 day was used in this scope. This is how long data will be stored by Prometheus before being dropped. A Custom Resource Definition (CRD) defines the configuration with which Prometheus is deployed, as such this must be modified using “kubectl edit” to accommodate the new scraping interval and memory retention duration. Both these parameters can be modified under the “probeSelector” section of the CRD, which is attached to the appendix of this paper
+
+```bash
+        ubuntu@mvictor-vm-1:~$ microk8s kubectl edit    prometheuses.monitoring.coreos.com -n observability
+           . . . 
+        probeSelector:
+            matchLabels:
+              release: kube-prom-stack
+          replicas: 1
+          retention: 1d
+          routePrefix: /
+          ruleNamespaceSelector: {}
+          ruleSelector:
+            matchLabels:
+              release: kube-prom-stack
+          scrapeInterval: 10s
+             . . .
+
+```
